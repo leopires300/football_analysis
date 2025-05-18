@@ -1,5 +1,5 @@
 import cv2
-fps = 30.0
+fps = 25.0
 
 def read_video(video_path):
     cap = cv2.VideoCapture(video_path)
