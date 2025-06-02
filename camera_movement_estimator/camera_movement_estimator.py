@@ -18,18 +18,29 @@ class CameraMovementEstimator():
         )
 
         first_frame_grayscale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        height, width = first_frame_grayscale.shape
         mask = np.zeros_like(first_frame_grayscale)
-        mask[:, 0:20] = 1
-        mask[:, 900:1050] = 1
+
+        margin = int(height * 0.1)
+        mask[:, 0:margin] = 1
+        mask[:, (height - margin):height] = 1
 
         self.features = dict(
-            maxCorners=100,
-            qualityLevel=0.3,
-            minDistance=3,
-            blockSize=7,
+            maxCorners=200,
+            qualityLevel=0.01,
+            minDistance=2,
+            blockSize=3,
             mask=mask,
         )
-
+    def add_adjust_positions_to_tracks(self, tracks, camera_movement_per_frame):
+        for object, object_tracks in tracks.items():
+            for frame_num, track in enumerate(object_tracks):
+                for track_id, track_info in track.items():
+                    position = track_info['position']
+                    camera_movement = camera_movement_per_frame[frame_num]
+                    adjusted_position = [position[0] - camera_movement[0], position[1] - camera_movement[1]]
+                    tracks[object][frame_num][track_id]['adjusted_position'] = adjusted_position
+    
     def get_camera_movement(self, frames, read_from_stub = False, stub_path = None):
         # Read the stub
         if read_from_stub and stub_path is not None and os.path.exists(stub_path):

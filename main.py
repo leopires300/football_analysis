@@ -17,6 +17,9 @@ def main():
                                        read_from_stub=True,
                                         stub_path='stubs/tracks_stubs.pkl')
 
+    # Get object positions
+    tracker.add_position_to_tracks(tracks)
+
     tmp = pd.DataFrame.from_dict(tracks)
     print(f"Total de entradas em tracks: {np.shape(tmp)}")
 
@@ -25,6 +28,10 @@ def main():
     camera_movement_per_frame = camera_movement_estimator.get_camera_movement(video_frames,
                                                                                     read_from_stub=True,
                                                                                     stub_path='stubs/camera_movement_stub.pkl')
+
+    # Add adjusted positions to tracks
+    camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
+    print(f"Total de entradas em camera_movement_per_frame: {len(camera_movement_per_frame)}")
 
     # Interpolate ball positions
     tracks['ball'] = tracker.interpolate_ball_positions(tracks['ball'])
@@ -42,7 +49,7 @@ def main():
     
     #Assign ball to Aquisition
     players_assigner = PlayerBallAssigner()
-    team_ball_control = []
+    team_ball_control = [] #-1
     for frame_num, player_track in enumerate(tracks['players']):
         ball_bbox = tracks['ball'][frame_num][1]['bbox']
         assigned_player = players_assigner.assign_ball_to_player(player_track, ball_bbox)
@@ -52,7 +59,10 @@ def main():
             tracks['players'][frame_num][assigned_player]['has_ball'] = True
             team_ball_control.append(tracks['players'][frame_num][assigned_player]['team'])
         else:
-            team_ball_control.append(team_ball_control[-1])
+            if len(team_ball_control) == 0:
+                team_ball_control.append(-1)
+            else:
+                team_ball_control.append(team_ball_control[-1])
     
     team_ball_control = np.array(team_ball_control)
 
@@ -64,7 +74,7 @@ def main():
     output_video_frames = camera_movement_estimator.draw_camera_movement(output_video_frames, camera_movement_per_frame)
 
     # Save Video
-    save_video(output_video_frames, 'output_video/CameraMovement_08fd33_41.avi')
+    save_video(output_video_frames, 'output_video/123.avi')
 
 if __name__ == '__main__':
     main()
