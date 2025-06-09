@@ -67,6 +67,10 @@ class TeamAssigner:
         if player_id == 93:
             team_id = 1
 
+        if str(player_id) == "93":
+            print("Override manual aplicado para o jogador 93")
+            team_id = 1
+
         self.player_team_dict[player_id] = team_id
         return team_id
     

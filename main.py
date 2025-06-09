@@ -6,6 +6,7 @@ import cv2
 from team_assigner import TeamAssigner
 from player_ball_assigner import PlayerBallAssigner
 from camera_movement_estimator import CameraMovementEstimator
+from view_tranformer import ViewTransformer
 
 def main():
     # Read Video
@@ -33,6 +34,10 @@ def main():
     camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
     print(f"Total de entradas em camera_movement_per_frame: {len(camera_movement_per_frame)}")
 
+    # Add transformed positions to tracks
+    view_transformer = ViewTransformer()
+    view_transformer.add_transformed_position_to_tracks(tracks)
+    
     # Interpolate ball positions
     tracks['ball'] = tracker.interpolate_ball_positions(tracks['ball'])
 
