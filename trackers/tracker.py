@@ -160,28 +160,32 @@ class Tracker:
     def draw_team_ball_control(self, frame, frame_num, team_ball_control):
         #Draw a semi-transparent rectangle
         overlay = frame.copy()
-        cv2.rectangle(overlay, (1200,30), (1850,100), (0,0,0), -1)
+        cv2.rectangle(overlay, (1200,30), (1850,115), (0,0,0), -1)
         alpha = 0.0
         cv2.addWeighted(overlay, alpha, frame, (1 - alpha), 0, frame)
 
+        print(f"Frame number: {frame_num}")
         team_ball_control_till_frame = team_ball_control[:frame_num+1]
+        # print(f"Team ball control till frame: {team_ball_control_till_frame}")
         team_1_num_frames = team_ball_control_till_frame[team_ball_control_till_frame == 1].shape[0]
         team_2_num_frames = team_ball_control_till_frame[team_ball_control_till_frame == 2].shape[0]
-        team_1 = team_1_num_frames/(team_1_num_frames + team_2_num_frames)
-        team_2 = team_2_num_frames/(team_1_num_frames + team_2_num_frames)
+        print(f"Team 1 num frames: {team_1_num_frames}")
+        print(f"Team 2 num frames: {team_2_num_frames}")
+        team_1 = team_1_num_frames/(team_1_num_frames + team_2_num_frames+1e-6)  # Adding a small value to avoid division by zero
+        team_2 = team_2_num_frames/(team_1_num_frames + team_2_num_frames+1e-6)  # Adding a small value to avoid division by zero
 
-        cv2.putText(frame, f"Team 1 Ball Possession: {team_1*100:.2f}%",
-                    (1270, 100), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 
-                    1, 
-                    (255, 255, 255), 
-                    2)
-        cv2.putText(frame, f"Team 2 Ball Possession: {team_2*100:.2f}%",
-                    (1270, 140),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    1,
-                    (255, 255, 255),
-                    2)
+        # cv2.putText(frame, f"Team 1 Ball Possession: {team_1*100:.2f}%",
+        #             (1270, 60), 
+        #             cv2.FONT_HERSHEY_SIMPLEX, 
+        #             1, 
+        #             (255, 255, 255), 
+        #             2)
+        # cv2.putText(frame, f"Team 2 Ball Possession: {team_2*100:.2f}%",
+        #             (1270, 100),
+        #             cv2.FONT_HERSHEY_SIMPLEX,
+        #             1,
+        #             (255, 255, 255),
+        #             2)
         
         return frame
     

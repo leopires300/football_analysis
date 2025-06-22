@@ -6,11 +6,12 @@ import cv2
 from team_assigner import TeamAssigner
 from player_ball_assigner import PlayerBallAssigner
 from camera_movement_estimator import CameraMovementEstimator
-from view_tranformer import ViewTransformer
+from view_transformer import ViewTransformer
+from speed_and_distance_estimator import SpeedAndDistanceEstimator
 
 def main():
     # Read Video
-    video_frames = read_video('input_videos/08fd33_41.mp4')
+    video_frames = read_video('input_videos/BotxPSG.mp4')
 
     #initialize tracker
     tracker = Tracker('models/best.pt')
@@ -37,10 +38,14 @@ def main():
     # Add transformed positions to tracks
     view_transformer = ViewTransformer()
     view_transformer.add_transformed_position_to_tracks(tracks)
-    
+
     # Interpolate ball positions
     tracks['ball'] = tracker.interpolate_ball_positions(tracks['ball'])
 
+    # Add speed and distance to tracks
+    speed_and_distance_estimator = SpeedAndDistanceEstimator()
+    speed_and_distance_estimator.add_speed_and_distance_to_tracks(tracks)
+    
     team_assigner = TeamAssigner()
     team_assigner.assign_team_color(video_frames[0], tracks['players'][0])
 
@@ -78,8 +83,11 @@ def main():
     ## Draw camera movement
     output_video_frames = camera_movement_estimator.draw_camera_movement(output_video_frames, camera_movement_per_frame)
 
+    #draw speed and distance
+    output_video_frames = speed_and_distance_estimator.draw_speed_and_distance(output_video_frames, tracks)
+
     # Save Video
-    save_video(output_video_frames, 'output_video/123.avi')
+    save_video(output_video_frames, 'output_video/BotxPSG.avi')
 
 if __name__ == '__main__':
     main()

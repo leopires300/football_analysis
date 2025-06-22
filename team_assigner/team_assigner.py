@@ -64,13 +64,15 @@ class TeamAssigner:
         team_id = self.kmeans.predict(player_color.reshape(1,-1))[0]
         team_id += 1
 
-        if player_id == 93:
-            team_id = 1
-
-        if str(player_id) == "93":
-            print("Override manual aplicado para o jogador 93")
-            team_id = 1
-
+        # if player_id == 17 or str(player_id) == "17":
+        #     team_id = 1
+        # if player_id == 18 or str(player_id) == "18":
+        #     team_id = 1
+        # if player_id == 19 or str(player_id) == "19":
+        #     team_id = 1
+        # if player_id == 92 or str(player_id) == "96":
+        #     team_id = 2
+        
         self.player_team_dict[player_id] = team_id
         return team_id
     
