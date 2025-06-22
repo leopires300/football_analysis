@@ -75,11 +75,11 @@ class SpeedAndDistanceEstimator():
 
                         # Draw speed and distance on the video frame
                         cv2.putText(frame, f'Speed: {speed:.2f} km/h', 
-                                position, 
+                                (int(position[0]), int(position[1])), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
                     
                         cv2.putText(frame, f'Distance: {distance:.2f} m', 
-                                (int(position[0]), int(position[1] + 20)), 
+                                (int(position[0]-20), int(position[1] + 20)), 
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
             output_frames.append(frame)
         
